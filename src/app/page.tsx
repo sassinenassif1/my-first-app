@@ -1,65 +1,198 @@
-import Image from "next/image";
+import Link from "next/link";
+
+const services = [
+  {
+    name: "General Checkup",
+    description:
+      "Comprehensive health examination including vital signs, physical exam, and preventive screening.",
+    duration: "30 min",
+  },
+  {
+    name: "Pediatrics",
+    description:
+      "Specialized care for infants, children, and adolescents including immunizations and growth monitoring.",
+    duration: "30 min",
+  },
+  {
+    name: "Cardiology",
+    description:
+      "Heart health evaluation including ECG, blood pressure management, and cardiovascular risk assessment.",
+    duration: "45 min",
+  },
+  {
+    name: "Dermatology",
+    description:
+      "Skin, hair, and nail conditions including acne, eczema, mole checks, and cosmetic treatments.",
+    duration: "30 min",
+  },
+  {
+    name: "Orthopedics",
+    description:
+      "Bone, joint, and muscle care including sports injuries, arthritis, and fracture treatment.",
+    duration: "45 min",
+  },
+  {
+    name: "Lab & Diagnostics",
+    description:
+      "Blood work, urinalysis, imaging, and other diagnostic tests with fast turnaround times.",
+    duration: "15 min",
+  },
+];
+
+const doctors = [
+  { name: "Dr. Sarah Mitchell", specialty: "Family Medicine", experience: "15 years" },
+  { name: "Dr. James Chen", specialty: "Cardiology", experience: "12 years" },
+  { name: "Dr. Maria Rodriguez", specialty: "Pediatrics", experience: "10 years" },
+  { name: "Dr. David Kim", specialty: "Dermatology", experience: "8 years" },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div>
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-primary to-primary-dark px-6 py-20 text-white">
+        <div className="mx-auto max-w-6xl">
+          <div className="max-w-2xl">
+            <h1 className="text-4xl font-bold leading-tight sm:text-5xl">
+              Your Health, Our Priority
+            </h1>
+            <p className="mt-4 text-lg text-white/90">
+              At CarePoint Medical Clinic, we provide compassionate,
+              comprehensive healthcare for your entire family. Book an
+              appointment today and experience the difference.
+            </p>
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <Link
+                href="/book"
+                className="rounded-lg bg-white px-6 py-3 text-center font-semibold text-primary-dark transition-colors hover:bg-primary-light"
+              >
+                Book an Appointment
+              </Link>
+              <a
+                href="tel:5551234567"
+                className="rounded-lg border-2 border-white/30 px-6 py-3 text-center font-semibold text-white transition-colors hover:border-white hover:bg-white/10"
+              >
+                Call (555) 123-4567
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="px-6 py-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-center text-3xl font-bold text-foreground">
+            Why Choose CarePoint?
+          </h2>
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                title: "Experienced Doctors",
+                text: "Board-certified physicians with decades of combined experience.",
+              },
+              {
+                title: "Easy Booking",
+                text: "Book your appointment online anytime, 24/7 convenience.",
+              },
+              {
+                title: "Modern Facilities",
+                text: "State-of-the-art equipment and comfortable, clean environment.",
+              },
+              {
+                title: "Affordable Care",
+                text: "We accept most insurance plans and offer competitive self-pay rates.",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="rounded-xl border border-border bg-card p-6 text-center"
+              >
+                <h3 className="text-lg font-semibold text-foreground">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm text-muted">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services */}
+      <section className="bg-accent px-6 py-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-center text-3xl font-bold text-foreground">
+            Our Services
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-muted">
+            From routine checkups to specialized care, we offer a full range of
+            medical services to keep you and your family healthy.
           </p>
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((service) => (
+              <div
+                key={service.name}
+                className="rounded-xl border border-border bg-card p-6"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-foreground">
+                    {service.name}
+                  </h3>
+                  <span className="rounded-full bg-primary-light px-3 py-1 text-xs font-medium text-primary-dark">
+                    {service.duration}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm text-muted">{service.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Doctors */}
+      <section className="px-6 py-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-center text-3xl font-bold text-foreground">
+            Meet Our Doctors
+          </h2>
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {doctors.map((doc) => (
+              <div
+                key={doc.name}
+                className="rounded-xl border border-border bg-card p-6 text-center"
+              >
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-light text-2xl font-bold text-primary-dark">
+                  {doc.name.split(" ").slice(1).map((n) => n[0]).join("")}
+                </div>
+                <h3 className="mt-4 font-semibold text-foreground">
+                  {doc.name}
+                </h3>
+                <p className="text-sm text-primary">{doc.specialty}</p>
+                <p className="mt-1 text-xs text-muted">
+                  {doc.experience} experience
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-primary px-6 py-16 text-center text-white">
+        <div className="mx-auto max-w-2xl">
+          <h2 className="text-3xl font-bold">Ready to Book Your Visit?</h2>
+          <p className="mt-3 text-white/90">
+            Schedule your appointment today and take the first step toward
+            better health.
+          </p>
+          <Link
+            href="/book"
+            className="mt-6 inline-block rounded-lg bg-white px-8 py-3 font-semibold text-primary-dark transition-colors hover:bg-primary-light"
+          >
+            Book Now
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
