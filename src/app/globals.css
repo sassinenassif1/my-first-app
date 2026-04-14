@@ -17,6 +17,19 @@
   --card-alt: #e8e1d1;
   --ink: #1c1a16;
   --cream: #faf6ec;
+
+  /* Dental clinic (intake) palette — fresh, clinical, calm */
+  --dental-bg: #f7fafc;
+  --dental-surface: #ffffff;
+  --dental-ink: #0f2336;
+  --dental-muted: #5a6b7a;
+  --dental-border: #e1e7ec;
+  --dental-border-strong: #c4d0db;
+  --dental-primary: #0a6e7a;
+  --dental-primary-dark: #074e57;
+  --dental-primary-light: #d6eef1;
+  --dental-accent: #2aa6a0;
+  --dental-danger: #b94a4a;
 }
 
 @theme inline {
@@ -39,6 +52,19 @@
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", sans-serif;
   --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  --font-arabic: "Noto Naskh Arabic", "Amiri", "Scheherazade New", "Traditional Arabic", "Segoe UI", serif;
+
+  --color-dental-bg: var(--dental-bg);
+  --color-dental-surface: var(--dental-surface);
+  --color-dental-ink: var(--dental-ink);
+  --color-dental-muted: var(--dental-muted);
+  --color-dental-border: var(--dental-border);
+  --color-dental-border-strong: var(--dental-border-strong);
+  --color-dental-primary: var(--dental-primary);
+  --color-dental-primary-dark: var(--dental-primary-dark);
+  --color-dental-primary-light: var(--dental-primary-light);
+  --color-dental-accent: var(--dental-accent);
+  --color-dental-danger: var(--dental-danger);
 }
 
 body {
@@ -85,4 +111,136 @@ body {
 
 .fade-up {
   animation: fadeUp 0.6s ease-out both;
+}
+
+/* === Dental intake form styles === */
+
+/* Arabic script tuning */
+:where([dir="rtl"]) {
+  font-family: var(--font-arabic);
+  letter-spacing: 0;
+}
+
+.intake-scope {
+  background: var(--dental-bg);
+  color: var(--dental-ink);
+}
+
+.intake-scope .intake-surface {
+  background: var(--dental-surface);
+  border: 1px solid var(--dental-border);
+}
+
+.intake-scope .intake-field {
+  width: 100%;
+  background: var(--dental-surface);
+  border: 1px solid var(--dental-border-strong);
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  color: var(--dental-ink);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.intake-scope .intake-field::placeholder {
+  color: var(--dental-muted);
+  opacity: 0.6;
+}
+.intake-scope .intake-field:focus {
+  outline: none;
+  border-color: var(--dental-primary);
+  box-shadow: 0 0 0 3px var(--dental-primary-light);
+}
+
+.intake-scope .intake-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--dental-ink);
+  margin-bottom: 0.4rem;
+}
+.intake-scope .intake-hint {
+  font-size: 0.78rem;
+  color: var(--dental-muted);
+  margin-top: 0.35rem;
+}
+
+.intake-scope .intake-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--dental-border-strong);
+  background: var(--dental-surface);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--dental-ink);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.intake-scope .intake-chip:hover {
+  border-color: var(--dental-primary);
+}
+.intake-scope .intake-chip[data-checked="true"] {
+  background: var(--dental-primary);
+  color: #ffffff;
+  border-color: var(--dental-primary);
+}
+
+.intake-scope .intake-card {
+  background: var(--dental-surface);
+  border: 1px solid var(--dental-border);
+  border-radius: 14px;
+}
+
+.intake-scope .intake-section-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: var(--dental-primary-light);
+  color: var(--dental-primary-dark);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.intake-scope .intake-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: var(--dental-primary);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 0.9rem 1.6rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background 0.15s;
+  border: none;
+  cursor: pointer;
+}
+.intake-scope .intake-btn:hover {
+  background: var(--dental-primary-dark);
+}
+.intake-scope .intake-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.intake-scope .intake-btn-ghost {
+  background: transparent;
+  color: var(--dental-primary-dark);
+  border: 1px solid var(--dental-border-strong);
+}
+.intake-scope .intake-btn-ghost:hover {
+  background: var(--dental-primary-light);
+  border-color: var(--dental-primary);
+}
+
+/* Mirror the arrow glyph when in RTL */
+:where([dir="rtl"]) .rtl-flip {
+  transform: scaleX(-1);
+  display: inline-block;
 }
