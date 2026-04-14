@@ -3,9 +3,9 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CarePoint Medical Clinic",
+  title: "CarePoint — A Quieter Kind of Care",
   description:
-    "Book your appointment at CarePoint Medical Clinic. Quality healthcare with experienced physicians.",
+    "Thoughtful, unhurried medicine for the whole family. Book an appointment with CarePoint Medical.",
 };
 
 export default function RootLayout({
@@ -16,26 +16,41 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col font-sans">
-        <header className="border-b border-border bg-card">
-          <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-primary">+</span>
-              <span className="text-xl font-semibold text-foreground">
+        <header className="border-b border-border">
+          <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+            <Link href="/" className="flex items-baseline gap-3">
+              <span className="font-serif text-2xl tracking-tight text-ink">
                 CarePoint
               </span>
+              <span className="eyebrow text-muted hidden sm:inline">
+                Est. 2010
+              </span>
             </Link>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-8">
               <Link
-                href="/"
-                className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+                href="/#services"
+                className="hidden sm:inline text-sm text-muted hover:text-ink transition-colors"
               >
-                Home
+                Services
+              </Link>
+              <Link
+                href="/#doctors"
+                className="hidden sm:inline text-sm text-muted hover:text-ink transition-colors"
+              >
+                Doctors
+              </Link>
+              <Link
+                href="/#practice"
+                className="hidden sm:inline text-sm text-muted hover:text-ink transition-colors"
+              >
+                Practice
               </Link>
               <Link
                 href="/book"
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-dark"
+                className="group inline-flex items-center gap-2 border-b border-ink pb-1 text-sm font-medium text-ink hover:border-accent hover:text-accent transition-colors"
               >
-                Book Appointment
+                Book a visit
+                <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
               </Link>
             </div>
           </nav>
@@ -43,41 +58,52 @@ export default function RootLayout({
 
         <main className="flex-1">{children}</main>
 
-        <footer className="border-t border-border bg-card">
-          <div className="mx-auto max-w-6xl px-6 py-8">
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-              <div>
-                <h3 className="font-semibold text-foreground">
-                  CarePoint Medical Clinic
+        <footer className="border-t border-border mt-24">
+          <div className="mx-auto max-w-6xl px-6 py-16">
+            <div className="grid grid-cols-1 gap-12 sm:grid-cols-12">
+              <div className="sm:col-span-5">
+                <p className="eyebrow text-muted">— Colophon</p>
+                <h3 className="font-serif text-3xl text-ink mt-3 leading-tight">
+                  A quieter kind of care,
+                  <br />
+                  in practice since 2010.
                 </h3>
-                <p className="mt-2 text-sm text-muted">
-                  Providing quality healthcare for your whole family since 2010.
-                </p>
               </div>
-              <div>
-                <h3 className="font-semibold text-foreground">Contact</h3>
-                <p className="mt-2 text-sm text-muted">
-                  123 Health Avenue, Suite 100
+              <div className="sm:col-span-3 sm:col-start-7">
+                <p className="eyebrow text-muted">— Visit</p>
+                <p className="mt-3 text-sm text-ink leading-relaxed">
+                  123 Health Avenue
+                  <br />
+                  Suite 100
                   <br />
                   Medical City, MC 12345
-                  <br />
-                  (555) 123-4567
                 </p>
+                <p className="mt-3 text-sm text-muted">(555) 123-4567</p>
               </div>
-              <div>
-                <h3 className="font-semibold text-foreground">Hours</h3>
-                <p className="mt-2 text-sm text-muted">
-                  Mon - Fri: 8:00 AM - 6:00 PM
-                  <br />
-                  Saturday: 9:00 AM - 2:00 PM
-                  <br />
-                  Sunday: Closed
-                </p>
+              <div className="sm:col-span-3">
+                <p className="eyebrow text-muted">— Hours</p>
+                <dl className="mt-3 space-y-1 text-sm text-ink">
+                  <div className="flex justify-between">
+                    <dt className="text-muted">Mon–Fri</dt>
+                    <dd>8 – 18</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-muted">Saturday</dt>
+                    <dd>9 – 14</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-muted">Sunday</dt>
+                    <dd>Closed</dd>
+                  </div>
+                </dl>
               </div>
             </div>
-            <p className="mt-8 border-t border-border pt-6 text-center text-xs text-muted">
-              &copy; 2026 CarePoint Medical Clinic. All rights reserved.
-            </p>
+            <div className="mt-16 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-t border-border pt-8">
+              <p className="font-serif italic text-muted text-sm">
+                © MMXXVI CarePoint Medical — all rights reserved.
+              </p>
+              <p className="eyebrow text-muted">Issue 01 · Spring</p>
+            </div>
           </div>
         </footer>
       </body>
