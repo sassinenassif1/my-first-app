@@ -18,18 +18,22 @@
   --ink: #1c1a16;
   --cream: #faf6ec;
 
-  /* Dental clinic (intake) palette — fresh, clinical, calm */
-  --dental-bg: #f7fafc;
-  --dental-surface: #ffffff;
-  --dental-ink: #0f2336;
-  --dental-muted: #5a6b7a;
-  --dental-border: #e1e7ec;
-  --dental-border-strong: #c4d0db;
-  --dental-primary: #0a6e7a;
-  --dental-primary-dark: #074e57;
-  --dental-primary-light: #d6eef1;
-  --dental-accent: #2aa6a0;
-  --dental-danger: #b94a4a;
+  /* Dental clinic (intake) — "patient chart, not patient portal".
+     Colors come from the actual room: enamel, gauze, warm ink,
+     faded chart-red pencil, amalgam graphite, a pinch of rinse-cup mint. */
+  --paper: #faf7f0;          /* enamel cream — base page */
+  --paper-2: #f3ede0;         /* gauze — card surface, one lightness step up from paper */
+  --paper-edge: #e8dfc9;      /* folded edge — thicker separators */
+  --ink: #1b1814;             /* warm near-black (never pure black) */
+  --ink-soft: #3a332b;        /* softened ink for hover / pressed */
+  --ink-muted: #5a5652;       /* amalgam graphite — secondary text */
+  --ink-faint: #8a8378;       /* metadata */
+  --ink-line: rgba(27, 24, 20, 0.10);       /* default rule */
+  --ink-line-strong: rgba(27, 24, 20, 0.22); /* emphasis rule, input underlines */
+  --ink-rule: rgba(27, 24, 20, 0.35);        /* tick marks on card margin */
+  --chart-red: #8a3a2e;       /* faded anatomical label red — required / error */
+  --chart-red-soft: rgba(138, 58, 46, 0.08);
+  --rinse: #cfe0d5;           /* peppermint — used once, for confirmed state */
 }
 
 @theme inline {
@@ -54,17 +58,14 @@
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
   --font-arabic: "Noto Naskh Arabic", "Amiri", "Scheherazade New", "Traditional Arabic", "Segoe UI", serif;
 
-  --color-dental-bg: var(--dental-bg);
-  --color-dental-surface: var(--dental-surface);
-  --color-dental-ink: var(--dental-ink);
-  --color-dental-muted: var(--dental-muted);
-  --color-dental-border: var(--dental-border);
-  --color-dental-border-strong: var(--dental-border-strong);
-  --color-dental-primary: var(--dental-primary);
-  --color-dental-primary-dark: var(--dental-primary-dark);
-  --color-dental-primary-light: var(--dental-primary-light);
-  --color-dental-accent: var(--dental-accent);
-  --color-dental-danger: var(--dental-danger);
+  /* Intake-scoped font stacks. Source Serif + Inter + JetBrains Mono are
+     wired in via next/font in the root layout; the variables below are
+     the runtime CSS names. Arabic falls through to Noto Naskh so mixed
+     runs render with matching voice. */
+  --font-intake-serif-stack: var(--font-intake-serif), "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Noto Naskh Arabic", serif;
+  --font-intake-sans-stack: var(--font-intake-sans), ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", "Noto Naskh Arabic", sans-serif;
+  --font-intake-mono-stack: var(--font-intake-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-arabic-stack: var(--font-intake-arabic), "Noto Naskh Arabic", "Amiri", serif;
 }
 
 body {
@@ -113,136 +114,332 @@ body {
   animation: fadeUp 0.6s ease-out both;
 }
 
-/* === Dental intake form styles === */
-
-/* Arabic script tuning */
-:where([dir="rtl"]) {
-  font-family: var(--font-arabic);
-  letter-spacing: 0;
-}
+/* === Patient-chart intake form ===
+   Intent: a paper patient record, not an app card.
+   Depth strategy: borders-only — subtle rules at rgba(ink)/0.10..0.22.
+   Signature: the left margin rule with tick marks (see .intake-card::before).
+*/
 
 .intake-scope {
-  background: var(--dental-bg);
-  color: var(--dental-ink);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-intake-sans-stack);
 }
 
-.intake-scope .intake-surface {
-  background: var(--dental-surface);
-  border: 1px solid var(--dental-border);
+/* Arabic script tuning — applied only inside the intake scope so the
+   marketing site's voice stays intact. */
+.intake-scope :where([dir="rtl"]) {
+  font-family: var(--font-arabic-stack);
+  letter-spacing: 0;
+}
+.intake-scope :where([dir="rtl"]) .font-serif,
+.intake-scope :where([dir="rtl"]) h1,
+.intake-scope :where([dir="rtl"]) h2,
+.intake-scope :where([dir="rtl"]) .intake-label,
+.intake-scope :where([dir="rtl"]) .intake-serif {
+  font-family: var(--font-arabic-stack);
 }
 
-.intake-scope .intake-field {
-  width: 100%;
-  background: var(--dental-surface);
-  border: 1px solid var(--dental-border-strong);
-  border-radius: 8px;
-  padding: 0.75rem 0.9rem;
-  /* 16px minimum prevents iOS Safari from zooming on focus */
-  font-size: 16px;
-  line-height: 1.35;
-  min-height: 2.75rem;
-  color: var(--dental-ink);
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.intake-scope textarea.intake-field {
-  min-height: 0;
-}
-.intake-scope .intake-field::placeholder {
-  color: var(--dental-muted);
-  opacity: 0.6;
-}
-.intake-scope .intake-field:focus {
-  outline: none;
-  border-color: var(--dental-primary);
-  box-shadow: 0 0 0 3px var(--dental-primary-light);
+/* Serif utility scoped to the intake. Don't override the marketing
+   site's global .font-serif. */
+.intake-scope .intake-serif {
+  font-family: var(--font-intake-serif-stack);
+  font-feature-settings: "liga", "kern";
 }
 
-.intake-scope .intake-label {
-  display: block;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--dental-ink);
-  margin-bottom: 0.4rem;
-}
-.intake-scope .intake-hint {
-  font-size: 0.78rem;
-  color: var(--dental-muted);
-  margin-top: 0.35rem;
+.intake-scope .intake-mono {
+  font-family: var(--font-intake-mono-stack);
+  font-feature-settings: "tnum", "kern";
 }
 
-.intake-scope .intake-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 0.9rem;
-  border: 1px solid var(--dental-border-strong);
-  background: var(--dental-surface);
-  border-radius: 999px;
-  font-size: 0.85rem;
-  color: var(--dental-ink);
-  cursor: pointer;
-  transition: all 0.15s;
-  user-select: none;
-}
-.intake-scope .intake-chip:hover {
-  border-color: var(--dental-primary);
-}
-.intake-scope .intake-chip[data-checked="true"] {
-  background: var(--dental-primary);
-  color: #ffffff;
-  border-color: var(--dental-primary);
-}
+/* ---- Card (patient-record sheet) ---- */
 
 .intake-scope .intake-card {
-  background: var(--dental-surface);
-  border: 1px solid var(--dental-border);
-  border-radius: 14px;
+  background: var(--paper-2);
+  border: 1px solid var(--ink-line);
+  border-radius: 4px;            /* sharper than app cards; paper has edges */
+  position: relative;
+  padding: 1.5rem 1.25rem 1.5rem 2.25rem;
 }
+.intake-scope .intake-card::before {
+  /* The signature: a vertical ruler rule with tick marks down the inside
+     edge, like the ruled margin on a real patient-record form. */
+  content: "";
+  position: absolute;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  left: 1rem;
+  width: 5px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--ink-rule) 0,
+    var(--ink-rule) 1px,
+    transparent 1px,
+    transparent 22px
+  );
+}
+.intake-scope :where([dir="rtl"]) .intake-card {
+  padding: 1.5rem 2.25rem 1.5rem 1.25rem;
+}
+.intake-scope :where([dir="rtl"]) .intake-card::before {
+  left: auto;
+  right: 1rem;
+}
+@media (min-width: 640px) {
+  .intake-scope .intake-card {
+    padding: 2rem 1.75rem 2rem 2.75rem;
+  }
+  .intake-scope .intake-card::before {
+    left: 1.25rem;
+    top: 1.75rem;
+    bottom: 1.75rem;
+  }
+  .intake-scope :where([dir="rtl"]) .intake-card {
+    padding: 2rem 2.75rem 2rem 1.75rem;
+  }
+  .intake-scope :where([dir="rtl"]) .intake-card::before {
+    right: 1.25rem;
+    left: auto;
+  }
+}
+
+/* ---- Section heading ---- */
 
 .intake-scope .intake-section-num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--ink-line-strong);
   border-radius: 999px;
-  background: var(--dental-primary-light);
-  color: var(--dental-primary-dark);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-family: var(--font-intake-serif-stack);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: transparent;
+  line-height: 1;
 }
+
+.intake-scope .intake-section-label {
+  font-family: var(--font-intake-sans-stack);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---- Field label ---- */
+
+.intake-scope .intake-label {
+  display: block;
+  font-family: var(--font-intake-sans-stack);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 0.5rem;
+}
+
+.intake-scope .intake-required {
+  color: var(--chart-red);
+  font-family: var(--font-intake-serif-stack);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.7rem;
+  margin-inline-start: 0.4rem;
+}
+
+.intake-scope .intake-err {
+  font-family: var(--font-intake-serif-stack);
+  font-style: italic;
+  font-size: 0.78rem;
+  color: var(--chart-red);
+  margin-top: 0.4rem;
+}
+
+/* ---- Fill-in-the-blank input (underline only) ---- */
+
+.intake-scope .intake-field {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink-line-strong);
+  border-radius: 0;
+  padding: 0.55rem 0 0.65rem;
+  /* 16px minimum prevents iOS Safari zoom-on-focus. */
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--ink);
+  font-family: var(--font-intake-sans-stack);
+  transition: border-color 0.15s;
+  min-height: 2.5rem;
+}
+.intake-scope textarea.intake-field {
+  border: 1px solid var(--ink-line-strong);
+  padding: 0.65rem 0.75rem;
+  border-radius: 3px;
+  min-height: 2.75rem;
+  background: rgba(255, 255, 255, 0.4);
+}
+.intake-scope .intake-field::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+  opacity: 0.85;
+}
+.intake-scope .intake-field:focus {
+  outline: none;
+  border-color: var(--ink);
+  border-bottom-width: 2px;
+  /* Pull content up 1px so focus doesn't shift baseline */
+  padding-bottom: calc(0.65rem - 1px);
+}
+.intake-scope textarea.intake-field:focus {
+  padding-bottom: 0.65rem;
+  box-shadow: inset 0 -2px 0 var(--ink);
+}
+.intake-scope .intake-field.is-error,
+.intake-scope textarea.intake-field.is-error {
+  border-color: var(--chart-red);
+}
+
+/* ---- Segmented print-style radio (male / female / other) ---- */
+
+.intake-scope .intake-segment-group {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  border: 1px solid var(--ink-line-strong);
+  border-radius: 3px;
+  overflow: hidden;
+  background: transparent;
+}
+.intake-scope .intake-segment {
+  position: relative;
+  background: transparent;
+  border: none;
+  border-inline-start: 1px solid var(--ink-line);
+  padding: 0.7rem 0.5rem;
+  min-height: 2.75rem;
+  font-family: var(--font-intake-serif-stack);
+  font-size: 0.95rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 0.12s, color 0.12s;
+  line-height: 1.1;
+}
+.intake-scope .intake-segment:first-child {
+  border-inline-start: none;
+}
+.intake-scope .intake-segment:hover {
+  background: rgba(27, 24, 20, 0.04);
+}
+.intake-scope .intake-segment[aria-checked="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  font-style: italic;
+}
+.intake-scope .intake-segment-group.is-error {
+  border-color: var(--chart-red);
+}
+
+/* ---- Condition "chip" → actual little square checkbox + label ---- */
+
+.intake-scope .intake-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.1rem;
+  background: transparent;
+  border: none;
+  font-family: var(--font-intake-serif-stack);
+  font-size: 0.98rem;
+  color: var(--ink);
+  cursor: pointer;
+  user-select: none;
+  min-height: 2.25rem;
+  text-align: start;
+}
+.intake-scope .intake-chip-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  border: 1px solid var(--ink-line-strong);
+  border-radius: 2px;
+  background: transparent;
+  flex-shrink: 0;
+  transition: background 0.12s, border-color 0.12s;
+}
+.intake-scope .intake-chip[data-checked="true"] .intake-chip-box {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.intake-scope .intake-chip[data-checked="true"] {
+  color: var(--ink);
+}
+.intake-scope .intake-chip:hover .intake-chip-box {
+  border-color: var(--ink);
+}
+
+/* ---- Primary button (inked, print-weight) ---- */
 
 .intake-scope .intake-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  background: var(--dental-primary);
-  color: #ffffff;
-  border-radius: 10px;
-  padding: 0.9rem 1.6rem;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: background 0.15s;
+  gap: 0.55rem;
+  background: var(--ink);
+  color: var(--paper);
   border: none;
+  border-radius: 3px;
+  padding: 0.95rem 1.5rem;
+  font-family: var(--font-intake-serif-stack);
+  font-weight: 500;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  transition: background 0.15s;
   cursor: pointer;
+  min-height: 3rem;
 }
 .intake-scope .intake-btn:hover {
-  background: var(--dental-primary-dark);
+  background: var(--ink-soft);
 }
 .intake-scope .intake-btn:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: not-allowed;
 }
-
 .intake-scope .intake-btn-ghost {
   background: transparent;
-  color: var(--dental-primary-dark);
-  border: 1px solid var(--dental-border-strong);
+  color: var(--ink);
+  border: 1px solid var(--ink-line-strong);
 }
 .intake-scope .intake-btn-ghost:hover {
-  background: var(--dental-primary-light);
-  border-color: var(--dental-primary);
+  background: rgba(27, 24, 20, 0.04);
+  border-color: var(--ink);
+}
+
+/* ---- "Signed" script flourish on the consent line ---- */
+.intake-scope .intake-signed {
+  font-family: var(--font-intake-serif-stack);
+  font-style: italic;
+  color: var(--chart-red);
+}
+
+/* ---- Error banner (pencil-margin note) ---- */
+.intake-scope .intake-note {
+  border-inline-start: 3px solid var(--chart-red);
+  background: var(--chart-red-soft);
+  padding: 0.75rem 1rem;
+  color: var(--chart-red);
+  font-family: var(--font-intake-serif-stack);
+  font-style: italic;
+  font-size: 0.95rem;
 }
 
 /* Mirror the arrow glyph when in RTL */

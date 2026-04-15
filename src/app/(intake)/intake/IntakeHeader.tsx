@@ -3,50 +3,26 @@
 import { useLocale } from "./LocaleProvider";
 
 export function IntakeHeader() {
-  const { t, locale, toggleLocale } = useLocale();
+  const { t, toggleLocale } = useLocale();
 
   return (
-    <header className="border-b border-[var(--dental-border)] bg-[var(--dental-surface)]">
-      <div className="mx-auto flex max-w-xl items-center justify-between px-4 py-3 sm:px-5 sm:py-4">
-        <div className="flex items-center gap-3">
-          <span
-            aria-hidden
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--dental-primary)] text-white text-lg font-semibold"
-          >
-            {locale === "ar" ? "ن" : "N"}
-          </span>
-          <div className="leading-tight">
-            <p className="text-[0.95rem] font-semibold text-[var(--dental-ink)]">
-              {t.clinic}
-            </p>
-            <p className="text-[0.72rem] text-[var(--dental-muted)]">
-              {t.clinicTagline}
-            </p>
-          </div>
+    <header className="border-b border-[var(--ink-line)] bg-[var(--paper)]">
+      <div className="mx-auto flex max-w-xl items-baseline justify-between gap-4 px-5 pt-6 pb-4 sm:pt-7 sm:pb-5">
+        <div className="min-w-0">
+          <p className="intake-serif italic text-[0.78rem] tracking-[0.04em] text-[var(--ink-faint)]">
+            {t.clinicTagline}
+          </p>
+          <p className="intake-serif mt-0.5 text-[1.1rem] leading-tight text-[var(--ink)]">
+            {t.clinic}
+          </p>
         </div>
         <button
           type="button"
           onClick={toggleLocale}
           aria-label={t.switchAria}
-          className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--dental-border-strong)] bg-[var(--dental-surface)] px-3 py-1.5 text-sm text-[var(--dental-ink)] hover:border-[var(--dental-primary)] transition-colors"
+          className="intake-serif shrink-0 text-[0.9rem] italic text-[var(--chart-red)] underline decoration-[var(--chart-red)] decoration-[1px] underline-offset-[3px] transition-opacity hover:opacity-75 min-h-11 px-1"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="M2 12h20" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-          </svg>
-          <span>{t.switchToLang}</span>
+          {t.switchToLang}
         </button>
       </div>
     </header>

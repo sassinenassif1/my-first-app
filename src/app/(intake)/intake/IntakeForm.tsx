@@ -190,61 +190,50 @@ export function IntakeForm() {
     }
   }
 
-  const errClass = (k: keyof FormState) =>
-    errors[k]
-      ? " ring-2 ring-[var(--dental-danger)]/30 border-[var(--dental-danger)]"
-      : "";
+  const isErr = (k: keyof FormState) => Boolean(errors[k]);
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex-1 pb-24">
-      {/* Hero — compact on mobile */}
-      <section className="border-b border-[var(--dental-border)] bg-[var(--dental-surface)]">
-        <div className="mx-auto max-w-xl px-5 pt-6 pb-5">
-          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-[var(--dental-primary)]">
-            {t.heroEyebrow}
-          </p>
-          <h1 className="mt-2 font-serif text-[1.75rem] leading-[1.15] text-[var(--dental-ink)] sm:text-3xl">
+      {/* Masthead/hero — reads like the top of a paper form */}
+      <section className="border-b border-[var(--ink-line)]">
+        <div className="mx-auto max-w-xl px-5 pt-8 pb-7">
+          <p className="intake-section-label">{t.heroEyebrow}</p>
+          <h1 className="intake-serif mt-3 text-[1.9rem] leading-[1.12] tracking-[-0.01em] text-[var(--ink)] sm:text-[2.15rem]">
             {t.heroTitle}{" "}
-            <span className="italic text-[var(--dental-primary)]">
+            <span className="italic text-[var(--chart-red)]">
               {t.heroTitleItalic}
             </span>
           </h1>
-          <p className="mt-3 text-[0.95rem] leading-snug text-[var(--dental-muted)]">
+          <p className="mt-4 text-[0.97rem] leading-relaxed text-[var(--ink-muted)]">
             {t.heroLead}
           </p>
-          <p className="mt-2 text-xs text-[var(--dental-muted)]">
-            ⏱ {t.timeHint}
+          <p className="intake-serif mt-3 text-sm italic text-[var(--ink-faint)]">
+            {t.timeHint}
           </p>
         </div>
       </section>
 
-      <div className="mx-auto max-w-xl px-4 py-5 space-y-5 sm:px-5 sm:py-7 sm:space-y-6">
+      <div className="mx-auto max-w-xl px-4 py-6 space-y-6 sm:px-5 sm:py-8 sm:space-y-7">
         {showErrorBanner && (
-          <div
-            role="alert"
-            className="rounded-lg border border-[var(--dental-danger)]/30 bg-[var(--dental-danger)]/5 px-4 py-3 text-sm text-[var(--dental-danger)]"
-          >
+          <div role="alert" className="intake-note">
             {t.errorBanner}
           </div>
         )}
         {submitError && (
-          <div
-            role="alert"
-            className="rounded-lg border border-[var(--dental-danger)]/30 bg-[var(--dental-danger)]/5 px-4 py-3 text-sm text-[var(--dental-danger)]"
-          >
+          <div role="alert" className="intake-note">
             {submitError}
           </div>
         )}
 
         {/* Section 1 — About you */}
-        <section className="intake-card p-4 sm:p-6">
+        <section className="intake-card">
           <SectionHeading num={t.s1Num} title={t.s1Title} sub={t.s1Sub} />
 
-          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Field
               label={t.firstName}
               required
-              error={errors.firstName}
+              error={isErr("firstName")}
               errLabel={t.errRequired}
             >
               <input
@@ -254,13 +243,13 @@ export function IntakeForm() {
                 onChange={(e) => update("firstName", e.target.value)}
                 autoComplete="given-name"
                 autoCapitalize="words"
-                className={`intake-field${errClass("firstName")}`}
+                className={`intake-field${isErr("firstName") ? " is-error" : ""}`}
               />
             </Field>
             <Field
               label={t.lastName}
               required
-              error={errors.lastName}
+              error={isErr("lastName")}
               errLabel={t.errRequired}
             >
               <input
@@ -270,14 +259,14 @@ export function IntakeForm() {
                 onChange={(e) => update("lastName", e.target.value)}
                 autoComplete="family-name"
                 autoCapitalize="words"
-                className={`intake-field${errClass("lastName")}`}
+                className={`intake-field${isErr("lastName") ? " is-error" : ""}`}
               />
             </Field>
             <div className="sm:col-span-2">
               <Field
                 label={t.phone}
                 required
-                error={errors.phone}
+                error={isErr("phone")}
                 errLabel={t.errRequired}
               >
                 <input
@@ -289,14 +278,14 @@ export function IntakeForm() {
                   placeholder={t.phonePlaceholder}
                   autoComplete="tel"
                   dir="ltr"
-                  className={`intake-field${errClass("phone")}`}
+                  className={`intake-field${isErr("phone") ? " is-error" : ""}`}
                 />
               </Field>
             </div>
             <Field
               label={t.dob}
               required
-              error={errors.dob}
+              error={isErr("dob")}
               errLabel={t.errRequired}
             >
               <input
@@ -305,13 +294,13 @@ export function IntakeForm() {
                 value={form.dob}
                 onChange={(e) => update("dob", e.target.value)}
                 max={maxDob}
-                className={`intake-field${errClass("dob")}`}
+                className={`intake-field${isErr("dob") ? " is-error" : ""}`}
               />
             </Field>
             <Field
               label={t.city}
               required
-              error={errors.city}
+              error={isErr("city")}
               errLabel={t.errRequired}
             >
               <input
@@ -321,50 +310,40 @@ export function IntakeForm() {
                 onChange={(e) => update("city", e.target.value)}
                 autoComplete="address-level2"
                 autoCapitalize="words"
-                className={`intake-field${errClass("city")}`}
+                className={`intake-field${isErr("city") ? " is-error" : ""}`}
               />
             </Field>
             <div className="sm:col-span-2">
               <Field
                 label={t.gender}
                 required
-                error={errors.gender}
+                error={isErr("gender")}
                 errLabel={t.errRequired}
               >
-                <div
-                  data-field="gender"
-                  role="radiogroup"
-                  className="grid grid-cols-3 gap-2"
-                >
-                  <PillRadio
-                    checked={form.gender === "male"}
-                    onClick={() => update("gender", "male")}
-                    label={t.genderMale}
-                  />
-                  <PillRadio
-                    checked={form.gender === "female"}
-                    onClick={() => update("gender", "female")}
-                    label={t.genderFemale}
-                  />
-                  <PillRadio
-                    checked={form.gender === "other"}
-                    onClick={() => update("gender", "other")}
-                    label={t.genderOther}
-                  />
-                </div>
+                <SegmentGroup
+                  name="gender"
+                  error={isErr("gender")}
+                  value={form.gender}
+                  onChange={(v) => update("gender", v as Gender)}
+                  options={[
+                    { value: "male", label: t.genderMale },
+                    { value: "female", label: t.genderFemale },
+                    { value: "other", label: t.genderOther },
+                  ]}
+                />
               </Field>
             </div>
           </div>
         </section>
 
         {/* Section 2 — Health background */}
-        <section className="intake-card p-4 sm:p-6">
+        <section className="intake-card">
           <SectionHeading num={t.s2Num} title={t.s2Title} sub={t.s2Sub} />
 
-          <div className="mt-5 space-y-5">
+          <div className="mt-6 space-y-6">
             <div>
               <p className="intake-label">{t.conditionsIntro}</p>
-              <div className="mt-2 flex flex-wrap gap-2">
+              <div className="mt-1 grid grid-cols-2 gap-x-3 gap-y-0 sm:grid-cols-2">
                 {CONDITION_KEYS.map((k) => (
                   <Chip
                     key={k}
@@ -373,11 +352,13 @@ export function IntakeForm() {
                     label={conditionLabel(k, t)}
                   />
                 ))}
-                <Chip
-                  checked={form.noneOfAbove}
-                  onClick={() => setNoneOfAbove(!form.noneOfAbove)}
-                  label={t.condNone}
-                />
+                <div className="col-span-2 mt-2 border-t border-dashed border-[var(--ink-line)] pt-2">
+                  <Chip
+                    checked={form.noneOfAbove}
+                    onClick={() => setNoneOfAbove(!form.noneOfAbove)}
+                    label={t.condNone}
+                  />
+                </div>
               </div>
             </div>
 
@@ -414,93 +395,96 @@ export function IntakeForm() {
             <Field
               label={t.smoker}
               required
-              error={errors.smoker}
+              error={isErr("smoker")}
               errLabel={t.errRequired}
             >
-              <div
-                data-field="smoker"
-                role="radiogroup"
-                className="grid grid-cols-3 gap-2"
-              >
-                <PillRadio
-                  checked={form.smoker === "yes"}
-                  onClick={() => update("smoker", "yes")}
-                  label={t.smokerYes}
-                />
-                <PillRadio
-                  checked={form.smoker === "no"}
-                  onClick={() => update("smoker", "no")}
-                  label={t.smokerNo}
-                />
-                <PillRadio
-                  checked={form.smoker === "former"}
-                  onClick={() => update("smoker", "former")}
-                  label={t.smokerFormer}
-                />
-              </div>
+              <SegmentGroup
+                name="smoker"
+                error={isErr("smoker")}
+                value={form.smoker}
+                onChange={(v) => update("smoker", v as Smoker)}
+                options={[
+                  { value: "yes", label: t.smokerYes },
+                  { value: "no", label: t.smokerNo },
+                  { value: "former", label: t.smokerFormer },
+                ]}
+              />
             </Field>
 
             <Field
               label={t.pregnantLabel}
               required
-              error={errors.pregnant}
+              error={isErr("pregnant")}
               errLabel={t.errRequired}
             >
-              <div
-                data-field="pregnant"
-                role="radiogroup"
-                className="grid grid-cols-3 gap-2"
-              >
-                <PillRadio
-                  checked={form.pregnant === "yes"}
-                  onClick={() => update("pregnant", "yes")}
-                  label={t.pregnantYes}
-                />
-                <PillRadio
-                  checked={form.pregnant === "no"}
-                  onClick={() => update("pregnant", "no")}
-                  label={t.pregnantNo}
-                />
-                <PillRadio
-                  checked={form.pregnant === "na"}
-                  onClick={() => update("pregnant", "na")}
-                  label={t.pregnantNA}
-                />
-              </div>
+              <SegmentGroup
+                name="pregnant"
+                error={isErr("pregnant")}
+                value={form.pregnant}
+                onChange={(v) => update("pregnant", v as Pregnant)}
+                options={[
+                  { value: "yes", label: t.pregnantYes },
+                  { value: "no", label: t.pregnantNo },
+                  { value: "na", label: t.pregnantNA },
+                ]}
+              />
             </Field>
           </div>
         </section>
 
-        {/* Section 3 — Consent */}
-        <section className="intake-card p-4 sm:p-6">
+        {/* Section 3 — Signature / consent */}
+        <section className="intake-card">
           <SectionHeading num={t.s3Num} title={t.s3Title} sub={t.s3Sub} />
 
-          <label className="mt-5 flex items-start gap-3 cursor-pointer">
+          <label className="mt-6 flex items-start gap-3 cursor-pointer">
+            <span
+              aria-hidden
+              className="intake-chip-box mt-1"
+              data-checked={form.consent}
+              style={{
+                background: form.consent ? "var(--ink)" : "transparent",
+                borderColor: form.consent
+                  ? "var(--ink)"
+                  : errors.consent
+                    ? "var(--chart-red)"
+                    : "var(--ink-line-strong)",
+              }}
+            >
+              {form.consent && (
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  stroke="var(--paper)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M2 6.5L5 9.5L10 3.5" />
+                </svg>
+              )}
+            </span>
             <input
               type="checkbox"
               data-field="consent"
               checked={form.consent}
               onChange={(e) => update("consent", e.target.checked)}
-              className="mt-1 h-5 w-5 shrink-0 accent-[var(--dental-primary)] cursor-pointer"
+              className="sr-only"
             />
-            <span className="text-[0.95rem] leading-relaxed text-[var(--dental-ink)]">
+            <span className="intake-serif text-[1rem] leading-relaxed text-[var(--ink)]">
               {t.consent}
             </span>
           </label>
-          {errors.consent && (
-            <p className="mt-2 ms-8 text-xs text-[var(--dental-danger)]">
-              {t.errRequired}
-            </p>
-          )}
+          {errors.consent && <p className="intake-err ms-8">{t.errRequired}</p>}
         </section>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="intake-btn w-full text-base"
-        >
+        <button type="submit" disabled={submitting} className="intake-btn w-full">
           {submitting ? t.submitting : t.submit}
-          <span aria-hidden className="rtl-flip">→</span>
+          <span aria-hidden className="rtl-flip text-[var(--paper)]/80">
+            →
+          </span>
         </button>
       </div>
     </form>
@@ -518,13 +502,13 @@ function SectionHeading({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="intake-section-num">{num}</span>
+      <span className="intake-section-num shrink-0">{num}</span>
       <div className="min-w-0">
-        <h2 className="font-serif text-xl text-[var(--dental-ink)] leading-tight sm:text-2xl">
+        <h2 className="intake-serif text-[1.35rem] leading-tight tracking-[-0.005em] text-[var(--ink)] sm:text-[1.55rem]">
           {title}
         </h2>
         {sub && (
-          <p className="mt-0.5 text-xs text-[var(--dental-muted)] sm:text-sm">
+          <p className="mt-1 text-[0.82rem] text-[var(--ink-faint)] sm:text-sm">
             {sub}
           </p>
         )}
@@ -550,45 +534,46 @@ function Field({
     <label className="block">
       <span className="intake-label">
         {label}
-        {required && (
-          <span aria-hidden className="ms-1 text-[var(--dental-danger)]">
-            *
-          </span>
-        )}
+        {required && <span className="intake-required">*</span>}
       </span>
       {children}
-      {error && errLabel && (
-        <span className="mt-1 block text-xs text-[var(--dental-danger)]">
-          {errLabel}
-        </span>
-      )}
+      {error && errLabel && <span className="intake-err block">{errLabel}</span>}
     </label>
   );
 }
 
-function PillRadio({
-  checked,
-  onClick,
-  label,
+function SegmentGroup<T extends string>({
+  name,
+  value,
+  onChange,
+  options,
+  error,
 }: {
-  checked: boolean;
-  onClick: () => void;
-  label: string;
+  name: string;
+  value: T | "";
+  onChange: (v: T) => void;
+  options: { value: T; label: string }[];
+  error?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={checked}
-      onClick={onClick}
-      className={`min-h-11 rounded-lg border px-3 text-sm font-medium transition-colors ${
-        checked
-          ? "border-[var(--dental-primary)] bg-[var(--dental-primary)] text-white"
-          : "border-[var(--dental-border-strong)] bg-[var(--dental-surface)] text-[var(--dental-ink)] hover:border-[var(--dental-primary)]"
-      }`}
+    <div
+      data-field={name}
+      role="radiogroup"
+      className={`intake-segment-group${error ? " is-error" : ""}`}
     >
-      {label}
-    </button>
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          role="radio"
+          aria-checked={value === o.value}
+          onClick={() => onChange(o.value)}
+          className="intake-segment"
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -609,15 +594,23 @@ function Chip({
       data-checked={checked}
       className="intake-chip"
     >
-      <span
-        aria-hidden
-        className={`inline-block h-3.5 w-3.5 rounded-full border transition-colors ${
-          checked
-            ? "bg-white border-white"
-            : "border-[var(--dental-border-strong)]"
-        }`}
-      />
-      {label}
+      <span aria-hidden className="intake-chip-box">
+        {checked && (
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="var(--paper)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M2 6.5L5 9.5L10 3.5" />
+          </svg>
+        )}
+      </span>
+      <span className="leading-tight">{label}</span>
     </button>
   );
 }

@@ -37,26 +37,28 @@ export function ConfirmationContent() {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center py-32">
-        <p className="font-serif italic text-[var(--dental-muted)]">…</p>
+        <p className="intake-serif italic text-[var(--ink-faint)]">…</p>
       </div>
     );
   }
 
   if (!submission) {
     return (
-      <div className="flex-1 mx-auto max-w-2xl px-5 py-20 text-center">
-        <p className="text-xs uppercase tracking-[0.18em] text-[var(--dental-danger)]">
+      <div className="flex-1 mx-auto max-w-xl px-5 py-20 text-center">
+        <p className="intake-section-label text-[var(--chart-red)]">
           {t.requiredMark}
         </p>
-        <h1 className="mt-3 font-serif text-3xl text-[var(--dental-ink)]">
+        <h1 className="intake-serif mt-4 text-[2rem] text-[var(--ink)] leading-tight">
           {t.notFoundTitle}
         </h1>
-        <p className="mt-4 text-[var(--dental-muted)]">{t.notFoundLead}</p>
+        <p className="mt-4 text-[var(--ink-muted)]">{t.notFoundLead}</p>
         <Link
           href="/intake"
           className="intake-btn intake-btn-ghost mt-8 inline-flex"
         >
-          <span aria-hidden className="rtl-flip">←</span>
+          <span aria-hidden className="rtl-flip">
+            ←
+          </span>
           {t.returnHome}
         </Link>
       </div>
@@ -64,63 +66,69 @@ export function ConfirmationContent() {
   }
 
   return (
-    <div className="flex-1 mx-auto max-w-2xl px-5 py-16">
-      <div className="intake-card p-8 sm:p-10 text-center">
-        <div
-          aria-hidden
-          className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-[var(--dental-primary-light)]"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--dental-primary-dark)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+    <div className="flex-1 mx-auto max-w-xl px-4 py-10 sm:px-5 sm:py-14">
+      <article className="intake-card">
+        {/* A stamped "received" mark — peppermint rinse, used once, here. */}
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full"
+            style={{ background: "var(--rinse)" }}
           >
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--ink)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          </span>
+          <p className="intake-section-label">{t.clinic}</p>
         </div>
-        <p className="mt-6 text-xs uppercase tracking-[0.18em] text-[var(--dental-primary)]">
-          {t.clinic}
-        </p>
-        <h1 className="mt-2 font-serif text-3xl sm:text-4xl text-[var(--dental-ink)]">
+
+        <h1 className="intake-serif mt-6 text-[2rem] leading-[1.1] tracking-[-0.01em] text-[var(--ink)] sm:text-[2.3rem]">
           {t.confirmTitle}{" "}
-          <span className="italic text-[var(--dental-primary)]">
+          <span className="italic text-[var(--chart-red)]">
             {submission.firstName}
           </span>
           .
         </h1>
-        <p className="mt-4 text-[var(--dental-muted)] leading-relaxed">
+        <p className="mt-4 text-[1rem] leading-relaxed text-[var(--ink-muted)]">
           {t.confirmLead}
         </p>
 
-        <div className="mt-8 inline-flex items-center gap-3 rounded-lg border border-[var(--dental-border)] bg-[var(--dental-bg)] px-4 py-2.5">
-          <span className="text-xs uppercase tracking-[0.15em] text-[var(--dental-muted)]">
-            {t.confirmRef}
-          </span>
-          <span
-            className="font-mono text-sm text-[var(--dental-ink)]"
+        {/* Reference number: mono, tabular, dir="ltr" so Arabic doesn't flip it */}
+        <div className="mt-8 border-t border-dashed border-[var(--ink-line)] pt-5">
+          <p className="intake-section-label">{t.confirmRef}</p>
+          <p
+            className="intake-mono mt-1 text-[1rem] text-[var(--ink)]"
             dir="ltr"
           >
             {submission.id}
-          </span>
+          </p>
         </div>
 
-        <p className="mt-8 text-sm italic text-[var(--dental-muted)]">
+        <p className="intake-serif mt-6 text-[0.95rem] italic text-[var(--ink-faint)]">
           {t.confirmCall}
         </p>
 
-        <div className="mt-10">
-          <Link href="/intake" className="intake-btn intake-btn-ghost inline-flex">
-            <span aria-hidden className="rtl-flip">←</span>
+        <div className="mt-8">
+          <Link
+            href="/intake"
+            className="intake-btn intake-btn-ghost inline-flex"
+          >
+            <span aria-hidden className="rtl-flip">
+              ←
+            </span>
             {t.returnHome}
           </Link>
         </div>
-      </div>
+      </article>
     </div>
   );
 }
