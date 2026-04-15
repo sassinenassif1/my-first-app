@@ -136,10 +136,16 @@ body {
   background: var(--dental-surface);
   border: 1px solid var(--dental-border-strong);
   border-radius: 8px;
-  padding: 0.7rem 0.9rem;
-  font-size: 0.95rem;
+  padding: 0.75rem 0.9rem;
+  /* 16px minimum prevents iOS Safari from zooming on focus */
+  font-size: 16px;
+  line-height: 1.35;
+  min-height: 2.75rem;
   color: var(--dental-ink);
   transition: border-color 0.15s, box-shadow 0.15s;
+}
+.intake-scope textarea.intake-field {
+  min-height: 0;
 }
 .intake-scope .intake-field::placeholder {
   color: var(--dental-muted);

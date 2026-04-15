@@ -7,7 +7,7 @@ export function IntakeHeader() {
 
   return (
     <header className="border-b border-[var(--dental-border)] bg-[var(--dental-surface)]">
-      <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4">
+      <div className="mx-auto flex max-w-xl items-center justify-between px-4 py-3 sm:px-5 sm:py-4">
         <div className="flex items-center gap-3">
           <span
             aria-hidden
@@ -28,7 +28,7 @@ export function IntakeHeader() {
           type="button"
           onClick={toggleLocale}
           aria-label={t.switchAria}
-          className="inline-flex items-center gap-2 rounded-full border border-[var(--dental-border-strong)] bg-[var(--dental-surface)] px-3 py-1.5 text-sm text-[var(--dental-ink)] hover:border-[var(--dental-primary)] transition-colors"
+          className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--dental-border-strong)] bg-[var(--dental-surface)] px-3 py-1.5 text-sm text-[var(--dental-ink)] hover:border-[var(--dental-primary)] transition-colors"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

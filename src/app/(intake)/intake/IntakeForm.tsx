@@ -8,14 +8,6 @@ import type { Dict } from "./translations";
 type Gender = "male" | "female" | "other";
 type Smoker = "yes" | "no" | "former";
 type Pregnant = "yes" | "no" | "na";
-type LastVisit = "under6" | "6to12" | "1to3" | "over3" | "never";
-type Reason =
-  | "checkup"
-  | "pain"
-  | "cosmetic"
-  | "ortho"
-  | "emergency"
-  | "other";
 
 const CONDITION_KEYS = [
   "diabetes",
@@ -34,64 +26,32 @@ const CONDITION_KEYS = [
 ] as const;
 type ConditionKey = (typeof CONDITION_KEYS)[number];
 
-const ISSUE_KEYS = [
-  "bleedingGums",
-  "sensitive",
-  "grinding",
-  "jawPain",
-  "badBreath",
-  "dryMouth",
-] as const;
-type IssueKey = (typeof ISSUE_KEYS)[number];
-
 type FormState = {
   firstName: string;
   lastName: string;
+  phone: string;
   dob: string;
   gender: Gender | "";
-  idNumber: string;
-  occupation: string;
-
-  phone: string;
-  email: string;
   city: string;
-  address: string;
-  emergencyName: string;
-  emergencyPhone: string;
-  emergencyRelation: string;
 
   conditions: ConditionKey[];
   noneOfAbove: boolean;
   otherConditions: string;
-
   medications: string;
   allergies: string;
   smoker: Smoker | "";
   pregnant: Pregnant | "";
 
-  lastVisit: LastVisit | "";
-  reason: Reason | "";
-  issues: IssueKey[];
-  notes: string;
-
   consent: boolean;
-  consentPrivacy: boolean;
 };
 
 const initialState: FormState = {
   firstName: "",
   lastName: "",
+  phone: "",
   dob: "",
   gender: "",
-  idNumber: "",
-  occupation: "",
-  phone: "",
-  email: "",
   city: "",
-  address: "",
-  emergencyName: "",
-  emergencyPhone: "",
-  emergencyRelation: "",
   conditions: [],
   noneOfAbove: false,
   otherConditions: "",
@@ -99,12 +59,7 @@ const initialState: FormState = {
   allergies: "",
   smoker: "",
   pregnant: "",
-  lastVisit: "",
-  reason: "",
-  issues: [],
-  notes: "",
   consent: false,
-  consentPrivacy: false,
 };
 
 function conditionLabel(k: ConditionKey, t: Dict) {
@@ -138,41 +93,19 @@ function conditionLabel(k: ConditionKey, t: Dict) {
   }
 }
 
-function issueLabel(k: IssueKey, t: Dict) {
-  switch (k) {
-    case "bleedingGums":
-      return t.issueBleedingGums;
-    case "sensitive":
-      return t.issueSensitive;
-    case "grinding":
-      return t.issueGrinding;
-    case "jawPain":
-      return t.issueJawPain;
-    case "badBreath":
-      return t.issueBadBreath;
-    case "dryMouth":
-      return t.issueDryMouth;
-  }
-}
-
 type FieldErrors = Partial<Record<keyof FormState, true>>;
 
 function validate(f: FormState): FieldErrors {
   const e: FieldErrors = {};
   if (!f.firstName.trim()) e.firstName = true;
   if (!f.lastName.trim()) e.lastName = true;
+  if (!f.phone.trim()) e.phone = true;
   if (!f.dob) e.dob = true;
   if (!f.gender) e.gender = true;
-  if (!f.phone.trim()) e.phone = true;
   if (!f.city.trim()) e.city = true;
-  if (!f.emergencyName.trim()) e.emergencyName = true;
-  if (!f.emergencyPhone.trim()) e.emergencyPhone = true;
   if (!f.smoker) e.smoker = true;
   if (!f.pregnant) e.pregnant = true;
-  if (!f.lastVisit) e.lastVisit = true;
-  if (!f.reason) e.reason = true;
   if (!f.consent) e.consent = true;
-  if (!f.consentPrivacy) e.consentPrivacy = true;
   return e;
 }
 
@@ -208,15 +141,6 @@ export function IntakeForm() {
     });
   };
 
-  const toggleIssue = (k: IssueKey) => {
-    setForm((prev) => ({
-      ...prev,
-      issues: prev.issues.includes(k)
-        ? prev.issues.filter((c) => c !== k)
-        : [...prev.issues, k],
-    }));
-  };
-
   const setNoneOfAbove = (checked: boolean) => {
     setForm((prev) => ({
       ...prev,
@@ -226,8 +150,7 @@ export function IntakeForm() {
   };
 
   const maxDob = useMemo(() => {
-    const d = new Date();
-    return d.toISOString().split("T")[0];
+    return new Date().toISOString().split("T")[0];
   }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -262,31 +185,31 @@ export function IntakeForm() {
       const result = await res.json();
       router.push(`/intake/confirmation?id=${result.id}&lang=${locale}`);
     } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : "Submission failed",
-      );
+      setSubmitError(err instanceof Error ? err.message : "Submission failed");
       setSubmitting(false);
     }
   }
 
-  const fieldErrClass = (k: keyof FormState) =>
-    errors[k] ? " ring-2 ring-[var(--dental-danger)]/30 border-[var(--dental-danger)]" : "";
+  const errClass = (k: keyof FormState) =>
+    errors[k]
+      ? " ring-2 ring-[var(--dental-danger)]/30 border-[var(--dental-danger)]"
+      : "";
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex-1">
-      {/* Hero */}
-      <section className="border-b border-[var(--dental-border)]">
-        <div className="mx-auto max-w-3xl px-5 pt-10 pb-8">
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--dental-primary)]">
+    <form onSubmit={handleSubmit} noValidate className="flex-1 pb-24">
+      {/* Hero — compact on mobile */}
+      <section className="border-b border-[var(--dental-border)] bg-[var(--dental-surface)]">
+        <div className="mx-auto max-w-xl px-5 pt-6 pb-5">
+          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-[var(--dental-primary)]">
             {t.heroEyebrow}
           </p>
-          <h1 className="mt-3 font-serif text-3xl sm:text-4xl leading-tight text-[var(--dental-ink)]">
+          <h1 className="mt-2 font-serif text-[1.75rem] leading-[1.15] text-[var(--dental-ink)] sm:text-3xl">
             {t.heroTitle}{" "}
             <span className="italic text-[var(--dental-primary)]">
               {t.heroTitleItalic}
             </span>
           </h1>
-          <p className="mt-4 text-[0.95rem] leading-relaxed text-[var(--dental-muted)]">
+          <p className="mt-3 text-[0.95rem] leading-snug text-[var(--dental-muted)]">
             {t.heroLead}
           </p>
           <p className="mt-2 text-xs text-[var(--dental-muted)]">
@@ -295,7 +218,7 @@ export function IntakeForm() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl px-5 py-8 space-y-8">
+      <div className="mx-auto max-w-xl px-4 py-5 space-y-5 sm:px-5 sm:py-7 sm:space-y-6">
         {showErrorBanner && (
           <div
             role="alert"
@@ -313,11 +236,11 @@ export function IntakeForm() {
           </div>
         )}
 
-        {/* Section 01 — About you */}
-        <section className="intake-card p-6 sm:p-8">
+        {/* Section 1 — About you */}
+        <section className="intake-card p-4 sm:p-6">
           <SectionHeading num={t.s1Num} title={t.s1Title} sub={t.s1Sub} />
 
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field
               label={t.firstName}
               required
@@ -330,7 +253,8 @@ export function IntakeForm() {
                 value={form.firstName}
                 onChange={(e) => update("firstName", e.target.value)}
                 autoComplete="given-name"
-                className={`intake-field${fieldErrClass("firstName")}`}
+                autoCapitalize="words"
+                className={`intake-field${errClass("firstName")}`}
               />
             </Field>
             <Field
@@ -345,9 +269,30 @@ export function IntakeForm() {
                 value={form.lastName}
                 onChange={(e) => update("lastName", e.target.value)}
                 autoComplete="family-name"
-                className={`intake-field${fieldErrClass("lastName")}`}
+                autoCapitalize="words"
+                className={`intake-field${errClass("lastName")}`}
               />
             </Field>
+            <div className="sm:col-span-2">
+              <Field
+                label={t.phone}
+                required
+                error={errors.phone}
+                errLabel={t.errRequired}
+              >
+                <input
+                  type="tel"
+                  inputMode="tel"
+                  data-field="phone"
+                  value={form.phone}
+                  onChange={(e) => update("phone", e.target.value)}
+                  placeholder={t.phonePlaceholder}
+                  autoComplete="tel"
+                  dir="ltr"
+                  className={`intake-field${errClass("phone")}`}
+                />
+              </Field>
+            </div>
             <Field
               label={t.dob}
               required
@@ -360,84 +305,7 @@ export function IntakeForm() {
                 value={form.dob}
                 onChange={(e) => update("dob", e.target.value)}
                 max={maxDob}
-                className={`intake-field${fieldErrClass("dob")}`}
-              />
-            </Field>
-            <Field
-              label={t.gender}
-              required
-              error={errors.gender}
-              errLabel={t.errRequired}
-            >
-              <div data-field="gender" className="flex flex-wrap gap-2">
-                <Chip
-                  checked={form.gender === "male"}
-                  onClick={() => update("gender", "male")}
-                  label={t.genderMale}
-                />
-                <Chip
-                  checked={form.gender === "female"}
-                  onClick={() => update("gender", "female")}
-                  label={t.genderFemale}
-                />
-                <Chip
-                  checked={form.gender === "other"}
-                  onClick={() => update("gender", "other")}
-                  label={t.genderOther}
-                />
-              </div>
-            </Field>
-            <Field label={t.idNumber}>
-              <input
-                type="text"
-                value={form.idNumber}
-                onChange={(e) => update("idNumber", e.target.value)}
-                className="intake-field"
-              />
-            </Field>
-            <Field label={t.occupation}>
-              <input
-                type="text"
-                value={form.occupation}
-                onChange={(e) => update("occupation", e.target.value)}
-                className="intake-field"
-              />
-            </Field>
-          </div>
-        </section>
-
-        {/* Section 02 — Contact */}
-        <section className="intake-card p-6 sm:p-8">
-          <SectionHeading num={t.s2Num} title={t.s2Title} sub={t.s2Sub} />
-
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <Field
-              label={t.phone}
-              required
-              error={errors.phone}
-              errLabel={t.errRequired}
-            >
-              <input
-                type="tel"
-                inputMode="tel"
-                data-field="phone"
-                value={form.phone}
-                onChange={(e) => update("phone", e.target.value)}
-                placeholder={t.phonePlaceholder}
-                autoComplete="tel"
-                dir="ltr"
-                className={`intake-field${fieldErrClass("phone")}`}
-              />
-            </Field>
-            <Field label={t.email}>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => update("email", e.target.value)}
-                placeholder="you@example.com"
-                autoComplete="email"
-                dir="ltr"
-                className="intake-field"
+                className={`intake-field${errClass("dob")}`}
               />
             </Field>
             <Field
@@ -452,83 +320,67 @@ export function IntakeForm() {
                 value={form.city}
                 onChange={(e) => update("city", e.target.value)}
                 autoComplete="address-level2"
-                className={`intake-field${fieldErrClass("city")}`}
+                autoCapitalize="words"
+                className={`intake-field${errClass("city")}`}
               />
             </Field>
-            <Field label={t.address}>
-              <input
-                type="text"
-                value={form.address}
-                onChange={(e) => update("address", e.target.value)}
-                autoComplete="street-address"
-                className="intake-field"
-              />
-            </Field>
-            <Field
-              label={t.emergencyName}
-              required
-              error={errors.emergencyName}
-              errLabel={t.errRequired}
-            >
-              <input
-                type="text"
-                data-field="emergencyName"
-                value={form.emergencyName}
-                onChange={(e) => update("emergencyName", e.target.value)}
-                className={`intake-field${fieldErrClass("emergencyName")}`}
-              />
-            </Field>
-            <Field
-              label={t.emergencyPhone}
-              required
-              error={errors.emergencyPhone}
-              errLabel={t.errRequired}
-            >
-              <input
-                type="tel"
-                data-field="emergencyPhone"
-                value={form.emergencyPhone}
-                onChange={(e) => update("emergencyPhone", e.target.value)}
-                dir="ltr"
-                className={`intake-field${fieldErrClass("emergencyPhone")}`}
-              />
-            </Field>
-            <Field label={t.emergencyRelation}>
-              <input
-                type="text"
-                value={form.emergencyRelation}
-                onChange={(e) => update("emergencyRelation", e.target.value)}
-                className="intake-field"
-              />
-            </Field>
+            <div className="sm:col-span-2">
+              <Field
+                label={t.gender}
+                required
+                error={errors.gender}
+                errLabel={t.errRequired}
+              >
+                <div
+                  data-field="gender"
+                  role="radiogroup"
+                  className="grid grid-cols-3 gap-2"
+                >
+                  <PillRadio
+                    checked={form.gender === "male"}
+                    onClick={() => update("gender", "male")}
+                    label={t.genderMale}
+                  />
+                  <PillRadio
+                    checked={form.gender === "female"}
+                    onClick={() => update("gender", "female")}
+                    label={t.genderFemale}
+                  />
+                  <PillRadio
+                    checked={form.gender === "other"}
+                    onClick={() => update("gender", "other")}
+                    label={t.genderOther}
+                  />
+                </div>
+              </Field>
+            </div>
           </div>
         </section>
 
-        {/* Section 03 — General health */}
-        <section className="intake-card p-6 sm:p-8">
-          <SectionHeading num={t.s3Num} title={t.s3Title} sub={t.s3Sub} />
+        {/* Section 2 — Health background */}
+        <section className="intake-card p-4 sm:p-6">
+          <SectionHeading num={t.s2Num} title={t.s2Title} sub={t.s2Sub} />
 
-          <p className="mt-6 text-sm text-[var(--dental-ink)] font-medium">
-            {t.conditionsIntro}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {CONDITION_KEYS.map((k) => (
-              <Chip
-                key={k}
-                checked={form.conditions.includes(k)}
-                onClick={() => toggleCondition(k)}
-                label={conditionLabel(k, t)}
-              />
-            ))}
-            <Chip
-              checked={form.noneOfAbove}
-              onClick={() => setNoneOfAbove(!form.noneOfAbove)}
-              label={t.condNone}
-              variant="muted"
-            />
-          </div>
+          <div className="mt-5 space-y-5">
+            <div>
+              <p className="intake-label">{t.conditionsIntro}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {CONDITION_KEYS.map((k) => (
+                  <Chip
+                    key={k}
+                    checked={form.conditions.includes(k)}
+                    onClick={() => toggleCondition(k)}
+                    label={conditionLabel(k, t)}
+                  />
+                ))}
+                <Chip
+                  checked={form.noneOfAbove}
+                  onClick={() => setNoneOfAbove(!form.noneOfAbove)}
+                  label={t.condNone}
+                />
+              </div>
+            </div>
 
-          <div className="mt-6">
             <Field label={t.otherConditions}>
               <textarea
                 rows={2}
@@ -538,14 +390,7 @@ export function IntakeForm() {
                 className="intake-field resize-none"
               />
             </Field>
-          </div>
-        </section>
 
-        {/* Section 04 — Meds & allergies */}
-        <section className="intake-card p-6 sm:p-8">
-          <SectionHeading num={t.s4Num} title={t.s4Title} sub={t.s4Sub} />
-
-          <div className="mt-6 space-y-5">
             <Field label={t.medications}>
               <textarea
                 rows={2}
@@ -555,6 +400,7 @@ export function IntakeForm() {
                 className="intake-field resize-none"
               />
             </Field>
+
             <Field label={t.allergies}>
               <textarea
                 rows={2}
@@ -571,18 +417,22 @@ export function IntakeForm() {
               error={errors.smoker}
               errLabel={t.errRequired}
             >
-              <div data-field="smoker" className="flex flex-wrap gap-2">
-                <Chip
+              <div
+                data-field="smoker"
+                role="radiogroup"
+                className="grid grid-cols-3 gap-2"
+              >
+                <PillRadio
                   checked={form.smoker === "yes"}
                   onClick={() => update("smoker", "yes")}
                   label={t.smokerYes}
                 />
-                <Chip
+                <PillRadio
                   checked={form.smoker === "no"}
                   onClick={() => update("smoker", "no")}
                   label={t.smokerNo}
                 />
-                <Chip
+                <PillRadio
                   checked={form.smoker === "former"}
                   onClick={() => update("smoker", "former")}
                   label={t.smokerFormer}
@@ -596,18 +446,22 @@ export function IntakeForm() {
               error={errors.pregnant}
               errLabel={t.errRequired}
             >
-              <div data-field="pregnant" className="flex flex-wrap gap-2">
-                <Chip
+              <div
+                data-field="pregnant"
+                role="radiogroup"
+                className="grid grid-cols-3 gap-2"
+              >
+                <PillRadio
                   checked={form.pregnant === "yes"}
                   onClick={() => update("pregnant", "yes")}
                   label={t.pregnantYes}
                 />
-                <Chip
+                <PillRadio
                   checked={form.pregnant === "no"}
                   onClick={() => update("pregnant", "no")}
                   label={t.pregnantNo}
                 />
-                <Chip
+                <PillRadio
                   checked={form.pregnant === "na"}
                   onClick={() => update("pregnant", "na")}
                   label={t.pregnantNA}
@@ -617,148 +471,37 @@ export function IntakeForm() {
           </div>
         </section>
 
-        {/* Section 05 — Dental history */}
-        <section className="intake-card p-6 sm:p-8">
-          <SectionHeading num={t.s5Num} title={t.s5Title} sub={t.s5Sub} />
+        {/* Section 3 — Consent */}
+        <section className="intake-card p-4 sm:p-6">
+          <SectionHeading num={t.s3Num} title={t.s3Title} sub={t.s3Sub} />
 
-          <div className="mt-6 space-y-6">
-            <Field
-              label={t.lastVisit}
-              required
-              error={errors.lastVisit}
-              errLabel={t.errRequired}
-            >
-              <div data-field="lastVisit" className="flex flex-wrap gap-2">
-                <Chip
-                  checked={form.lastVisit === "under6"}
-                  onClick={() => update("lastVisit", "under6")}
-                  label={t.lastVisitUnder6}
-                />
-                <Chip
-                  checked={form.lastVisit === "6to12"}
-                  onClick={() => update("lastVisit", "6to12")}
-                  label={t.lastVisit6to12}
-                />
-                <Chip
-                  checked={form.lastVisit === "1to3"}
-                  onClick={() => update("lastVisit", "1to3")}
-                  label={t.lastVisit1to3}
-                />
-                <Chip
-                  checked={form.lastVisit === "over3"}
-                  onClick={() => update("lastVisit", "over3")}
-                  label={t.lastVisitOver3}
-                />
-                <Chip
-                  checked={form.lastVisit === "never"}
-                  onClick={() => update("lastVisit", "never")}
-                  label={t.lastVisitNever}
-                />
-              </div>
-            </Field>
-
-            <Field
-              label={t.reason}
-              required
-              error={errors.reason}
-              errLabel={t.errRequired}
-            >
-              <div data-field="reason" className="flex flex-wrap gap-2">
-                <Chip
-                  checked={form.reason === "checkup"}
-                  onClick={() => update("reason", "checkup")}
-                  label={t.reasonCheckup}
-                />
-                <Chip
-                  checked={form.reason === "pain"}
-                  onClick={() => update("reason", "pain")}
-                  label={t.reasonPain}
-                />
-                <Chip
-                  checked={form.reason === "cosmetic"}
-                  onClick={() => update("reason", "cosmetic")}
-                  label={t.reasonCosmetic}
-                />
-                <Chip
-                  checked={form.reason === "ortho"}
-                  onClick={() => update("reason", "ortho")}
-                  label={t.reasonOrtho}
-                />
-                <Chip
-                  checked={form.reason === "emergency"}
-                  onClick={() => update("reason", "emergency")}
-                  label={t.reasonEmergency}
-                />
-                <Chip
-                  checked={form.reason === "other"}
-                  onClick={() => update("reason", "other")}
-                  label={t.reasonOther}
-                />
-              </div>
-            </Field>
-
-            <div>
-              <p className="text-sm text-[var(--dental-ink)] font-medium">
-                {t.issuesIntro}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {ISSUE_KEYS.map((k) => (
-                  <Chip
-                    key={k}
-                    checked={form.issues.includes(k)}
-                    onClick={() => toggleIssue(k)}
-                    label={issueLabel(k, t)}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <Field label={t.notes}>
-              <textarea
-                rows={3}
-                value={form.notes}
-                onChange={(e) => update("notes", e.target.value)}
-                placeholder={t.notesPlaceholder}
-                className="intake-field resize-none"
-              />
-            </Field>
-          </div>
-        </section>
-
-        {/* Section 06 — Consent */}
-        <section className="intake-card p-6 sm:p-8">
-          <SectionHeading num={t.s6Num} title={t.s6Title} sub={t.s6Sub} />
-
-          <div className="mt-6 space-y-4">
-            <ConsentRow
+          <label className="mt-5 flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              data-field="consent"
               checked={form.consent}
-              onChange={(v) => update("consent", v)}
-              label={t.consent}
-              error={errors.consent}
-              errLabel={t.errRequired}
-              fieldKey="consent"
+              onChange={(e) => update("consent", e.target.checked)}
+              className="mt-1 h-5 w-5 shrink-0 accent-[var(--dental-primary)] cursor-pointer"
             />
-            <ConsentRow
-              checked={form.consentPrivacy}
-              onChange={(v) => update("consentPrivacy", v)}
-              label={t.consentPrivacy}
-              error={errors.consentPrivacy}
-              errLabel={t.errRequired}
-              fieldKey="consentPrivacy"
-            />
-          </div>
+            <span className="text-[0.95rem] leading-relaxed text-[var(--dental-ink)]">
+              {t.consent}
+            </span>
+          </label>
+          {errors.consent && (
+            <p className="mt-2 ms-8 text-xs text-[var(--dental-danger)]">
+              {t.errRequired}
+            </p>
+          )}
         </section>
 
-        <div className="flex justify-end pt-2">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="intake-btn w-full sm:w-auto sm:min-w-[220px]"
-          >
-            {submitting ? t.submitting : t.submit}
-            <span aria-hidden className="rtl-flip">→</span>
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="intake-btn w-full text-base"
+        >
+          {submitting ? t.submitting : t.submit}
+          <span aria-hidden className="rtl-flip">→</span>
+        </button>
       </div>
     </form>
   );
@@ -774,13 +517,17 @@ function SectionHeading({
   sub: string;
 }) {
   return (
-    <div className="flex items-start gap-4">
+    <div className="flex items-start gap-3">
       <span className="intake-section-num">{num}</span>
-      <div>
-        <h2 className="font-serif text-xl sm:text-2xl text-[var(--dental-ink)] leading-tight">
+      <div className="min-w-0">
+        <h2 className="font-serif text-xl text-[var(--dental-ink)] leading-tight sm:text-2xl">
           {title}
         </h2>
-        <p className="mt-1 text-sm text-[var(--dental-muted)]">{sub}</p>
+        {sub && (
+          <p className="mt-0.5 text-xs text-[var(--dental-muted)] sm:text-sm">
+            {sub}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -804,10 +551,7 @@ function Field({
       <span className="intake-label">
         {label}
         {required && (
-          <span
-            aria-hidden
-            className="ms-1 text-[var(--dental-danger)]"
-          >
+          <span aria-hidden className="ms-1 text-[var(--dental-danger)]">
             *
           </span>
         )}
@@ -822,16 +566,40 @@ function Field({
   );
 }
 
-function Chip({
+function PillRadio({
   checked,
   onClick,
   label,
-  variant,
 }: {
   checked: boolean;
   onClick: () => void;
   label: string;
-  variant?: "muted";
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={checked}
+      onClick={onClick}
+      className={`min-h-11 rounded-lg border px-3 text-sm font-medium transition-colors ${
+        checked
+          ? "border-[var(--dental-primary)] bg-[var(--dental-primary)] text-white"
+          : "border-[var(--dental-border-strong)] bg-[var(--dental-surface)] text-[var(--dental-ink)] hover:border-[var(--dental-primary)]"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function Chip({
+  checked,
+  onClick,
+  label,
+}: {
+  checked: boolean;
+  onClick: () => void;
+  label: string;
 }) {
   return (
     <button
@@ -839,7 +607,7 @@ function Chip({
       onClick={onClick}
       aria-pressed={checked}
       data-checked={checked}
-      className={`intake-chip${variant === "muted" ? " opacity-90" : ""}`}
+      className="intake-chip"
     >
       <span
         aria-hidden
@@ -851,43 +619,5 @@ function Chip({
       />
       {label}
     </button>
-  );
-}
-
-function ConsentRow({
-  checked,
-  onChange,
-  label,
-  error,
-  errLabel,
-  fieldKey,
-}: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-  label: string;
-  error?: boolean;
-  errLabel?: string;
-  fieldKey: string;
-}) {
-  return (
-    <div>
-      <label className="flex items-start gap-3 cursor-pointer">
-        <input
-          type="checkbox"
-          data-field={fieldKey}
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-          className="mt-1 h-5 w-5 shrink-0 accent-[var(--dental-primary)] cursor-pointer"
-        />
-        <span className="text-sm leading-relaxed text-[var(--dental-ink)]">
-          {label}
-        </span>
-      </label>
-      {error && errLabel && (
-        <p className="mt-1 ms-8 text-xs text-[var(--dental-danger)]">
-          {errLabel}
-        </p>
-      )}
-    </div>
   );
 }
