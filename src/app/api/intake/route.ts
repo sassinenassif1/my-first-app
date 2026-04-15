@@ -6,35 +6,20 @@ interface IntakeSubmission {
 
   firstName: string;
   lastName: string;
+  phone: string;
   dob: string;
   gender: string;
-  idNumber: string;
-  occupation: string;
-
-  phone: string;
-  email: string;
   city: string;
-  address: string;
-  emergencyName: string;
-  emergencyPhone: string;
-  emergencyRelation: string;
 
   conditions: string[];
   noneOfAbove: boolean;
   otherConditions: string;
-
   medications: string;
   allergies: string;
   smoker: string;
   pregnant: string;
 
-  lastVisit: string;
-  reason: string;
-  issues: string[];
-  notes: string;
-
   consent: boolean;
-  consentPrivacy: boolean;
 
   createdAt: string;
 }
@@ -64,34 +49,24 @@ export async function POST(request: NextRequest) {
 
   const firstName = s(body.firstName).trim();
   const lastName = s(body.lastName).trim();
+  const phone = s(body.phone).trim();
   const dob = s(body.dob).trim();
   const gender = s(body.gender).trim();
-  const phone = s(body.phone).trim();
   const city = s(body.city).trim();
-  const emergencyName = s(body.emergencyName).trim();
-  const emergencyPhone = s(body.emergencyPhone).trim();
   const smoker = s(body.smoker).trim();
   const pregnant = s(body.pregnant).trim();
-  const lastVisit = s(body.lastVisit).trim();
-  const reason = s(body.reason).trim();
   const consent = bool(body.consent);
-  const consentPrivacy = bool(body.consentPrivacy);
 
   const missing = {
     firstName: !firstName,
     lastName: !lastName,
+    phone: !phone,
     dob: !dob,
     gender: !gender,
-    phone: !phone,
     city: !city,
-    emergencyName: !emergencyName,
-    emergencyPhone: !emergencyPhone,
     smoker: !smoker,
     pregnant: !pregnant,
-    lastVisit: !lastVisit,
-    reason: !reason,
     consent: !consent,
-    consentPrivacy: !consentPrivacy,
   };
   const missingKeys = Object.entries(missing)
     .filter(([, v]) => v)
@@ -112,17 +87,10 @@ export async function POST(request: NextRequest) {
     locale,
     firstName,
     lastName,
+    phone,
     dob,
     gender,
-    idNumber: s(body.idNumber).trim(),
-    occupation: s(body.occupation).trim(),
-    phone,
-    email: s(body.email).trim(),
     city,
-    address: s(body.address).trim(),
-    emergencyName,
-    emergencyPhone,
-    emergencyRelation: s(body.emergencyRelation).trim(),
     conditions: arr(body.conditions),
     noneOfAbove: bool(body.noneOfAbove),
     otherConditions: s(body.otherConditions).trim(),
@@ -130,12 +98,7 @@ export async function POST(request: NextRequest) {
     allergies: s(body.allergies).trim(),
     smoker,
     pregnant,
-    lastVisit,
-    reason,
-    issues: arr(body.issues),
-    notes: s(body.notes).trim(),
     consent,
-    consentPrivacy,
     createdAt: new Date().toISOString(),
   };
 
